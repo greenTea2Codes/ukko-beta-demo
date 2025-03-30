@@ -16,15 +16,22 @@ q_request = os.getenv("FMI_WFS_REQUEST")
 q_stored_query_id = os.getenv("ECMWF_FORCAST_SURFACE_POINT_SIMPLE")
 q_weather_params = os.getenv("FMI_PARAMETERS")
 
-start_time = datetime.datetime.now(datetime.timezone.utc)
-start_time_str = datetime.datetime.strftime(start_time, "%Y-%m-%dT%H:%M:%SZ")
-hours = 1
-tstep = 10
-end_time = start_time + datetime.timedelta(hours=hours)
-end_time_str = datetime.datetime.strftime(end_time, "%Y-%m-%dT%H:%M:%SZ")
+# start_time = datetime.datetime.now(datetime.timezone.utc)
+# start_time_str = datetime.datetime.strftime(start_time, "%Y-%m-%dT%H:%M:%SZ")
+# hours = 1
+# tstep = 10
+# end_time = start_time + datetime.timedelta(hours=hours)
+# end_time_str = datetime.datetime.strftime(end_time, "%Y-%m-%dT%H:%M:%SZ")
 
 def get_weather(location):
+    start_time = datetime.datetime.now(datetime.timezone.utc)
+    start_time_str = datetime.datetime.strftime(start_time, "%Y-%m-%dT%H:%M:%SZ")
+    hours = 1
+    tstep = 10
+    end_time = start_time + datetime.timedelta(hours=hours)
+    end_time_str = datetime.datetime.strftime(end_time, "%Y-%m-%dT%H:%M:%SZ")
     weather_forcasts = {"place": location, "forcasts": []}
+    
     url = f"{base_url}?service={q_service}&version={q_service_version}&request={q_request}&storedquery_id={q_stored_query_id}&place={location}&starttime={start_time_str}&endtime={end_time_str}&timestep={tstep}&parameters={q_weather_params}"
 
     response = requests.get(url)
