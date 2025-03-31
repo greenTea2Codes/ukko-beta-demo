@@ -1,8 +1,8 @@
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import os
 from transformers import pipeline
 
-load_dotenv()
+# load_dotenv()
 
 model = os.getenv("LLM_MODEL_CHECKPOINT")
 pipe = pipeline("text-generation", model, device=0)
@@ -12,21 +12,29 @@ def get_llm_response(user_input, user_context, weather_data):
     # system_prompt = f"""
     # You are a helpful and friendly assistant. You give simple and direct clothing advice based on the user's location and current temperature. Avoid repeating the same information.
     # The user's location is: {user_context or 'Unknown'}
-    # The current temperature there is: {weather_data['forcasts'][0]['temperature'] or 'Not available'} Degrees Celsius.
+    # The current temperature there is: {weather_data['forecasts'][0]['temperature'] or 'Not available'} Degrees Celsius.
+    # """
+
+    # system_prompt = f"""
+    # You are a helpful and friendly assistant. You give simple and direct clothing advice based on the user's location and current temperature. Avoid repeating the same information.
+    # Examples:
+    # User: It's 3°C here. Can I wear a t-shirt?
+    # Assistant: No, it's too cold for a t-shirt. You should wear something warmer like a jacket.
+
+    # User: It's 18°C. Should I wear a coat?
+    # Assistant: No need for a coat. A hoodie or light jacket should be enough.
+
+    # Now here's the current situation:    
+    # The user's location is: {user_context or 'Unknown'}
+    # The current temperature there is: {weather_data['forecasts'][0]['temperature'] or 'Not available'} Degrees Celsius.
     # """
 
     system_prompt = f"""
-    You are a helpful and friendly assistant. You give simple and direct clothing advice based on the user's location and current temperature. Avoid repeating the same information.
-    Examples:
-    User: It's 3°C here. Can I wear a t-shirt?
-    Assistant: No, it's too cold for a t-shirt. You should wear something warmer like a jacket.
-
-    User: It's 18°C. Should I wear a coat?
-    Assistant: No need for a coat. A hoodie or light jacket should be enough.
-
-    Now here's the current situation:    
-    The user's location is: {user_context or 'Unknown'}
-    The current temperature there is: {weather_data['forcasts'][0]['temperature'] or 'Not available'} Degrees Celsius.
+    You are Bob, a helpful assistant who gives simple and direct clothing advice.
+    Only use the current weather to answer the user's question.
+    Current temperature: {weather_data['forecasts'][0]['temperature'] or 'Not available'} Degrees Celsius.
+    Location: {user_context or 'Unknown'}
+    Avoid repeating yourself. Do not make up temperature values.
     """
 
     print(system_prompt)

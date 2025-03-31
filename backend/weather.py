@@ -1,4 +1,4 @@
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import os
 import requests
 import xml.etree.ElementTree as ET
@@ -7,30 +7,30 @@ from collections import defaultdict
 import math
 from fastapi import HTTPException
 
-load_dotenv()
+# load_dotenv()
 
 base_url = os.getenv("FMI_BASE_URL")
 q_service = os.getenv("FMI_WFS_SERVICE")
 q_service_version = os.getenv("FMI_WFS_SERVICE_VERSION")
 q_request = os.getenv("FMI_WFS_REQUEST")
-q_stored_query_id = os.getenv("ECMWF_FORCAST_SURFACE_POINT_SIMPLE")
+q_stored_query_id = os.getenv("ECMWF_FORECAST_SURFACE_POINT_SIMPLE")
 q_weather_params = os.getenv("FMI_PARAMETERS")
 
-# start_time = datetime.datetime.now(datetime.timezone.utc)
-# start_time_str = datetime.datetime.strftime(start_time, "%Y-%m-%dT%H:%M:%SZ")
-# hours = 1
-# tstep = 10
-# end_time = start_time + datetime.timedelta(hours=hours)
-# end_time_str = datetime.datetime.strftime(end_time, "%Y-%m-%dT%H:%M:%SZ")
-
+    
 def get_weather(location):
     start_time = datetime.datetime.now(datetime.timezone.utc)
-    start_time_str = datetime.datetime.strftime(start_time, "%Y-%m-%dT%H:%M:%SZ")
+    rounded_minute = (start_time.minute // 10) * 10
+    round_start = start_time.replace(minute=rounded_minute, second=0, microsecond=0)
+
+    start_time_str = round_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+
     hours = 1
     tstep = 10
-    end_time = start_time + datetime.timedelta(hours=hours)
-    end_time_str = datetime.datetime.strftime(end_time, "%Y-%m-%dT%H:%M:%SZ")
-    weather_forcasts = {"place": location, "forcasts": []}
+    end_time = round_start + datetime.timedelta(hours=hours)
+
+    end_time_str = end_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    weather_forecasts = {"place": location, "forecasts": []}
     
     url = f"{base_url}?service={q_service}&version={q_service_version}&request={q_request}&storedquery_id={q_stored_query_id}&place={location}&starttime={start_time_str}&endtime={end_time_str}&timestep={tstep}&parameters={q_weather_params}"
 
@@ -46,20 +46,20 @@ def get_weather(location):
 
     for elem in tree.iter():
         if elem.tag.endswith("BsWfsElement"):
-            forcast = {"time": None, "name": None, "value": None}
+            forecast = {"time": None, "name": None, "value": None}
 
             for child in elem:
                 if child.tag.endswith("Time"):
-                    forcast["time"] = child.text
+                    forecast["time"] = child.text
                 elif child.tag.endswith("ParameterName"):
-                    forcast["name"] = child.text
+                    forecast["name"] = child.text
                 elif child.tag.endswith("ParameterValue"):
-                    forcast["value"] = child.text
-            weather_forcasts["forcasts"].append(forcast)
+                    forecast["value"] = child.text
+            weather_forecasts["forecasts"].append(forecast)
     
     # group by time
     grouped = defaultdict(dict)
-    for item in weather_forcasts["forcasts"]:
+    for item in weather_forecasts["forecasts"]:
         time = item["time"]
         name = item["name"]
         value = item["value"]
@@ -74,7 +74,7 @@ def get_weather(location):
         grouped[time]["time"] = time
         grouped[time][name] = value
     
-    weather_forcasts["forcasts"] = list(grouped.values())
+    weather_forecasts["forecasts"] = list(grouped.values())
 
-    return weather_forcasts
+    return weather_forecasts
 
