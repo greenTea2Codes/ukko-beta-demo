@@ -20,5 +20,5 @@ async def read_root():
 @app.post("/chat")
 async def create_weather_advice(user_input: UserInput):
     weather_data = get_weather(user_input.location)
-    llm_response = get_llm_response(user_input.message, user_input.location, weather_data)
-    return {"response": llm_response}
+    return get_llm_response(user_input.message, user_input.location, weather_data)
+    # return {"response": llm_response}
