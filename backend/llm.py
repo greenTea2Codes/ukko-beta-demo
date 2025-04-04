@@ -1,11 +1,14 @@
 # from dotenv import load_dotenv
 import os
 from transformers import pipeline
+import torch
 
 # load_dotenv()
+# Automatically choose device
+device = 0 if torch.cuda.is_available() else -1
 
 model = os.getenv("LLM_MODEL_CHECKPOINT")
-pipe = pipeline("text-generation", model, device=0)
+pipe = pipeline("text-generation", model, device=device)
 
 def get_llm_response(user_input, user_context, weather_data):
     # print(weather_data)
