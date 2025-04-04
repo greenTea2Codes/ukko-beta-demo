@@ -1,7 +1,8 @@
 import { Box } from "@mui/material";
+import CircularProgress from '@mui/material/CircularProgress';
 import { useEffect, useRef } from "react";
 
-const ChatMessages = ({ messages }) => {
+const ChatMessages = ({ messages, isWaiting }) => {
     const bottomRef = useRef(null);
 
     useEffect(() => {
@@ -15,6 +16,10 @@ const ChatMessages = ({ messages }) => {
                     {msg.content}
                 </Box>
             ))}
+            { isWaiting && 
+                <Box>      
+                    <CircularProgress size="1rem"/>
+                </Box> }
             <Box ref={ bottomRef }/>
         </Box>
     );

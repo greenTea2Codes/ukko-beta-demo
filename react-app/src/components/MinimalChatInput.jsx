@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Box, TextField, Button } from "@mui/material";
 import axios from "axios";
 
-const MinimalChatInput = ({ updateMessages, location }) => {
+const MinimalChatInput = ({ updateMessages, location, setIsWaiting }) => {
     const [userInput, setUserInput] = useState('');
     const [isSendingMessage, setIsSendingMessage] = useState(false);
 
@@ -26,14 +26,19 @@ const MinimalChatInput = ({ updateMessages, location }) => {
 
         const backendEndpoint = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000/chat";
 
+        setIsWaiting(true);
         axios.post(backendEndpoint, requestBody).then(res => {
             const assistantMsg = {role: 'assistant', content: res.data.response.content};
             updateMessages(prev => [...prev, assistantMsg]);
             setIsSendingMessage(false);
+            setIsWaiting(false);
             setUserInput('');
         }).catch(err => {
             console.log(err);
+            const errMsg = {role: 'assistant', content: err.message};
+            updateMessages(prev => [...prev, errMsg]);
             setIsSendingMessage(false);
+            setIsWaiting(false);
             setUserInput('');
         });
     };

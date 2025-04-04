@@ -5,6 +5,7 @@ import ChatMessages from "./ChatMessages";
 
 const Chat = ({ location }) => {
     const [ messages, setMessages ] = useState([]);
+    const [ isWaitingResponse, setIsWaitingResponse ] = useState(false);
     return (
         <Box sx={{
             display: "flex",
@@ -16,13 +17,13 @@ const Chat = ({ location }) => {
                 overflowY: "auto",
                 padding: 2
             }}>
-                <ChatMessages messages={ messages }/>
+                <ChatMessages messages={ messages } isWaiting={ isWaitingResponse }/>
             </Box>
             <Box sx={{
                 padding: 2,
                 borderTop: "1px solid #ddd"
             }}>
-                <MinimalChatInput updateMessages={ setMessages } location={ location } />
+                <MinimalChatInput updateMessages={ setMessages } location={ location } setIsWaiting={ setIsWaitingResponse } />
             </Box>
         </Box>
     );
