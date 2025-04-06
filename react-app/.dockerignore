@@ -1,0 +1,25 @@
+# Vite/React cache
+node_modules
+.vite
+dist
+build
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor configs
+.vscode
+.idea
+
+# Dependency lockfiles (optional)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Local env files
+.env
+.env.local
+
+# Docker ignore itself
+.dockerignore
