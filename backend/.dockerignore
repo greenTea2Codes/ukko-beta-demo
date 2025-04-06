@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+.venv/
+env/
+venv/
+ENV/
+*.egg-info/
+
+.dockerignore
+.DS_Store
+.idea/
+.vscode/
+.env
